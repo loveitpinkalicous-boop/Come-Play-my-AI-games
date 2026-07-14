@@ -1,0 +1,14 @@
+body {
+    background: #d4ffd4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* prevents scrollbars */
+}
+
+canvas {
+    border: 3px solid darkgreen;
+}
