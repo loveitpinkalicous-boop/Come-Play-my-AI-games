@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cute Monster</title>
+    <style>
+        body {
+            margin: 0;
+            background: yellow;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+            background: yellow;
+        }
+
+        /* Bottom-left snake cat */
+        #snakeCatContainer {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            text-align: center;
+        }
+
+        #snakeCat {
+            width: 150px;
+            cursor: pointer;
+        }
+
+        #snakeLabel {
+            font-size: 22px;
+            font-weight: bold;
+            color: black;
+            margin-top: 5px;
+        }
+
+        /* Family button */
+        #famButtonContainer {
+            position: fixed;
+            bottom: 10px;
+            left: 180px;
+            text-align: center;
+        }
+
+        #famButton {
+            width: 150px;
+            cursor: pointer;
+        }
+
+        #famLabel {
+            font-size: 22px;
+            font-weight: bold;
+            color: black;
+            margin-top: 5px;
+        }
+
+        /* 2048 button */
+        #game2048Container {
+            position: fixed;
+            bottom: 10px;
+            left: 450px;
+            text-align: center;
+        }
+
+        #game2048Button {
+            width: 150px;
+            height: 150px;
+            background: pink;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #776e65;
+            cursor: pointer;
+        }
+
+        #game2048Label {
+            font-size: 22px;
+            font-weight: bold;
+            color: black;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ⭐ Bigger canvas for unicorn + poop + flies -->
+    <canvas id="gameCanvas" width="700" height="550"></canvas>
+
+    <!-- SNAKE GAME BUTTON -->
+    <div id="snakeCatContainer">
+        <a href="snakeGame.html">
+            <img id="snakeCat" src="snake_Cat.png" alt="Snake Cat">
+        </a>
+        <div id="snakeLabel">Snake Game</div>
+    </div>
+
+    <!-- FAMILY MEMORY GAME BUTTON -->
+    <div id="famButtonContainer">
+        <a href="familyPage.html">
+            <img id="famButton" src="fam_Image_Tweleve.jpg" alt="Family Memory Game">
+        </a>
+        <div id="famLabel">Family Memory Game</div>
+    </div>
+
+    <!-- 2048 GAME BUTTON -->
+    <div id="game2048Container">
+        <a href="game2048.html">
+            <div id="game2048Button">2048</div>
+        </a>
+        <div id="game2048Label">2048 Game</div>
+    </div>
+
+    <script src="monster.js"></script>
+
+    <!-- RANDOM IMAGE SCRIPT -->
+    <script>
+        const famImages = [
+            "fam_Image_Eight.jpeg",
+            "fam_Image_Eleven.jpeg",
+            "fam_Image_Five.jpg",
+            "fam_Image_Four.JPG",
+            "fam_Image_Nine.jpeg",
+            "fam_Image_One.JPG",
+            "fam_Image_Seven.jpeg",
+            "fam_Image_Six.JPG",
+            "fam_Image_Ten.jpeg",
+            "fam_Image_Three.JPG",
+            "fam_Image_Two.JPG",
+            "fam_Image_Tweleve.jpg",
+            "fam_Image_Fithteeth.JPG",
+            "fam_Image_Fourteen.JPG",
+            "fam_Image_Thirteen.JPG"
+        ];
+
+        const famButton = document.getElementById("famButton");
+
+        setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * famImages.length);
+            famButton.src = famImages[randomIndex];
+        }, 3000);
+    </script>
+
+</body>
+</html>
