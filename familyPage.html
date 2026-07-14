@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Family Memory Game</title>
+    <style>
+        body {
+            background: yellow;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        #stats {
+            font-size: 26px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #difficultySelect {
+            margin-top: 15px;
+            font-size: 22px;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        #gameBoard {
+            width: 800px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            width: 180px;
+            height: 180px;
+            background: white;
+            border: 3px solid black;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .card.flipped img {
+            display: block;
+        }
+
+        #restartButton, #backButton {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 22px;
+            font-weight: bold;
+            background: orange;
+            border: 3px solid black;
+            cursor: pointer;
+        }
+
+        #leaderboard {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #leaderboardTable {
+            margin: 10px auto;
+            width: 450px;
+            border-collapse: collapse;
+        }
+
+        #leaderboardTable td, #leaderboardTable th {
+            border: 2px solid black;
+            padding: 10px;
+            background: white;
+        }
+
+        /* Crown animation */
+        .crown {
+            width: 35px;
+            vertical-align: middle;
+            animation: bounce 1s infinite ease-in-out;
+            filter: drop-shadow(0px 0px 5px gold);
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Family Memory Game</h1>
+
+    <!-- Difficulty Selector -->
+    <select id="difficultySelect">
+        <option value="easy">Easy (6 pairs)</option>
+        <option value="medium" selected>Medium (12 pairs)</option>
+        <option value="hard">Hard (15 pairs)</option>
+    </select>
+
+    <!-- TIMER + SCORE -->
+    <div id="stats">
+        Time: <span id="timer">0</span> seconds |
+        Score: <span id="score">0</span>
+    </div>
+
+    <div id="gameBoard"></div>
+
+    <button id="restartButton">Restart Game</button>
+    <br>
+    <button id="backButton" onclick="window.location.href='monster.html'">
+        Back to Monster Page
+    </button>
+
+    <!-- LEADERBOARD -->
+    <div id="leaderboard">
+        Leaderboard (<span id="lbDifficulty">Medium</span>)
+        <table id="leaderboardTable">
+            <tr><th>Rank</th><th>Time</th><th>Score</th></tr>
+        </table>
+    </div>
+
+    <script>
+        const images = [
+            "fam_Image_Eight.jpeg",
+            "fam_Image_Eleven.jpeg",
+            "fam_Image_Five.jpg",
+            "fam_Image_Four.JPG",
+            "fam_Image_Nine.jpeg",
+            "fam_Image_One.JPG",
+            "fam_Image_Seven.jpeg",
+            "fam_Image_Six.JPG",
+            "fam_Image_Ten.jpeg",
+            "fam_Image_Three.JPG",
+            "fam_Image_Two.JPG",
+            "fam_Image_Tweleve.jpg",
+            "fam_Image_Thirteen.JPG",
+            "fam_Image_Fourteen.JPG",
+            "fam_Image_Fithteeth.JPG"
+        ];
+
+        let cardImages, flippedCards, matchedCount, score, time, timerInterval;
+
+        const gameBoard = document.getElementById("gameBoard");
+        const timerDisplay = document.getElementById("timer");
+        const scoreDisplay = document.getElementById("score");
+        const difficultySelect = document.getElementById("difficultySelect");
+        const lbDifficulty = document.getElementById("lbDifficulty");
+        const leaderboardTable = document.getElementById("leaderboardTable");
+
+        function startGame() {
+            gameBoard.innerHTML = "";
+            flippedCards = [];
+            matchedCount = 0;
+            score = 0;
+            time = 0;
+
+            timerDisplay.textContent = 0;
+            scoreDisplay.textContent = 0;
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                time++;
+                timerDisplay.textContent = time;
+            }, 1000);
+
+            let difficulty = difficultySelect.value;
+            lbDifficulty.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+
+            if (difficulty === "easy") {
+                cardImages = images.slice(0, 6);
+            } 
+            else if (difficulty === "medium") {
+                cardImages = images.slice(0, 12);
+            } 
+            else if (difficulty === "hard") {
+                cardImages = images.slice(0, 15);
+            }
+
+            cardImages = [...cardImages, ...cardImages];
+            cardImages.sort(() => Math.random() - 0.5);
+
+            cardImages.forEach(src => {
+                const card = document.createElement("div");
+                card.classList.add("card");
+
+                const img = document.createElement("img");
+                img.src = src;
+
+                card.appendChild(img);
+                gameBoard.appendChild(card);
+
+                card.addEventListener("click", () => {
+                    if (card.classList.contains("flipped") || flippedCards.length === 2) return;
+
+                    card.classList.add("flipped");
+                    flippedCards.push(card);
+
+                    if (flippedCards.length === 2) {
+                        setTimeout(checkMatch, 800);
+                    }
+                });
+            });
+
+            loadLeaderboard();
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            const img1 = card1.querySelector("img").src;
+            const img2 = card2.querySelector("img").src;
+
+            if (img1 === img2) {
+                matchedCount += 2;
+                score++;
+                scoreDisplay.textContent = score;
+            } else {
+                card1.classList.remove("flipped");
+                card2.classList.remove("flipped");
+            }
+
+            flippedCards = [];
+
+            if (matchedCount === cardImages.length) {
+                clearInterval(timerInterval);
+
+                saveScore();
+                loadLeaderboard();
+
+                setTimeout(() => {
+                    alert(
+                        "You matched all the family memories!\n" +
+                        "Score: " + score + "\n" +
+                        "Time: " + time + " seconds"
+                    );
+                }, 300);
+            }
+        }
+
+        function saveScore() {
+            let difficulty = difficultySelect.value;
+            let key = "leaderboard_" + difficulty;
+
+            let board = JSON.parse(localStorage.getItem(key)) || [];
+
+            board.push({ time: time, score: score });
+
+            board.sort((a, b) => a.time - b.time);
+
+            board = board.slice(0, 5);
+
+            localStorage.setItem(key, JSON.stringify(board));
+        }
+
+        function loadLeaderboard() {
+            let difficulty = difficultySelect.value;
+            let key = "leaderboard_" + difficulty;
+
+            let board = JSON.parse(localStorage.getItem(key)) || [];
+
+            leaderboardTable.innerHTML = `
+                <tr><th>Rank</th><th>Time</th><th>Score</th></tr>
+            `;
+
+            board.forEach((entry, index) => {
+                let crownHTML = index === 0 ? `<img src="crown.png" class="crown">` : "";
+
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${entry.time} sec ${crownHTML}</td>
+                    <td>${entry.score}</td>
+                `;
+                leaderboardTable.appendChild(row);
+            });
+        }
+
+        document.getElementById("restartButton").onclick = startGame;
+        difficultySelect.onchange = startGame;
+
+        startGame();
+    </script>
+
+</body>
+</html>
