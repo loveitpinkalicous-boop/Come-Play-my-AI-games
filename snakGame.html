@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="snakeGame.css">
+</head>
+<body>
+
+    <!-- ⭐ FULL‑PAGE FALLING BACKGROUND -->
+    <canvas id="fallCanvas"
+        style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        ">
+    </canvas>
+
+    <!-- Snake Game Canvas -->
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <button id="restartBtn"
+            style="
+                padding: 10px 20px;
+                font-size: 18px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-right: 10px;
+            ">
+            Restart Game
+        </button>
+
+        <button id="backBtn"
+            style="
+                padding: 10px 20px;
+                font-size: 18px;
+                background-color: #ff1493;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            "
+            onclick="window.location.href='monster.html'">
+            Back to Monster Page
+        </button>
+    </div>
+
+    <script src="snakeGame.js"></script>
+</body>
+</html>
